@@ -46,7 +46,7 @@
       "custom_css": [
         ".banner__buttons a {font-size: 18px;}",
         ".button {padding: 0; min-width: 172px;}",
-        ".banner__text p {font-size: 30px; color:white;}"
+        ".banner__text p {font-size: 30px; color: white;}"
       ],
       "settings": {
         "image": "shopify://shop_images/desktop_2160x_0dfddb8e-29d5-49ad-9d0f-a2dbe9344f32.jpg",
@@ -70,7 +70,7 @@
         "description": "",
         "show_description": false,
         "description_style": "body",
-        "collection": "all",
+        "collection": "men-all-products",
         "products_to_show": 8,
         "columns_desktop": 4,
         "full_width": false,
