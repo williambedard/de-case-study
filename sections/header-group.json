@@ -48,6 +48,9 @@
     },
     "header": {
       "type": "header",
+      "custom_css": [
+        ".header__menu-item {font-size: 16px;}"
+      ],
       "settings": {
         "logo_position": "middle-left",
         "menu": "main-menu",
