@@ -19,6 +19,13 @@
             "heading_size": "h0"
           }
         },
+        "text_JzNGeE": {
+          "type": "text",
+          "settings": {
+            "text": "Luxurious comfort, this way.",
+            "text_style": "subtitle"
+          }
+        },
         "button": {
           "type": "buttons",
           "settings": {
@@ -33,11 +40,12 @@
       },
       "block_order": [
         "heading",
+        "text_JzNGeE",
         "button"
       ],
       "settings": {
         "image": "shopify://shop_images/desktop_2160x_0dfddb8e-29d5-49ad-9d0f-a2dbe9344f32.jpg",
-        "image_overlay_opacity": 40,
+        "image_overlay_opacity": 0,
         "image_height": "large",
         "desktop_content_position": "bottom-center",
         "show_text_box": false,
