@@ -34,7 +34,8 @@
         "announcement-bar-0"
       ],
       "custom_css": [
-        ".h5 {font-size: 14px;}"
+        ".h5 {font-size: 14px;}",
+        ".utility-bar div{height: 5rem;}"
       ],
       "settings": {
         "color_scheme": "scheme-4",
