@@ -44,7 +44,8 @@
         "button"
       ],
       "custom_css": [
-        ".banner__buttons a {font-size: 16px;}"
+        ".banner__buttons a {font-size: 18px;}",
+        ".button {padding: 0;}"
       ],
       "settings": {
         "image": "shopify://shop_images/desktop_2160x_0dfddb8e-29d5-49ad-9d0f-a2dbe9344f32.jpg",
