@@ -5,12 +5,20 @@ class CartFreeGiftHandler {
       this.section = document.querySelector('.shopify-section.section');
       this.collectionDiv = document.querySelector('.collection');
       this.giftSection = document.querySelector('.cart-free-gift-section');
-      this.sectionTitle = document.querySelector('.collection__title .title.h1');
+      this.sectionTitle = document.querySelector('.collection__title .title.h1') || 
+                         document.querySelector('.collection .title.h1') ||
+                         document.querySelector('h2.title');
       this.productCards = document.querySelectorAll('.free-gift-product-card');
-      console.log('🎁 Free Gift Handler Initialized. Threshold:', this.cartThreshold);
       
-      if (!this.section || !this.collectionDiv) {
-        console.log('⚠️ Free Gift section elements not found on this page');
+      console.log('🎁 Free Gift Handler Initialized:', {
+          titleFound: !!this.sectionTitle,
+          titleElement: this.sectionTitle,
+          cardsFound: this.productCards.length
+      });
+      
+      if (!this.sectionTitle) {
+          console.warn('⚠️ Title element not found. Available titles:', 
+              document.querySelectorAll('.title.h1, h2.title'));
       }
       
       this.init();
