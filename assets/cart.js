@@ -116,14 +116,6 @@ class CartItems extends HTMLElement {
           console.error(e);
         });
     }
-
-    // After any cart update (quantity change, item added, etc.)
-    document.dispatchEvent(new CustomEvent('gift:check', { 
-      detail: { 
-        cartTotal: cart.total_price 
-      }
-    }));
-    console.log('Cart event dispatched:', cart.total_price); // Debug log
   }
 
   getSectionsToRender() {
@@ -216,10 +208,6 @@ class CartItems extends HTMLElement {
         }
 
         publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-items', cartData: parsedState, variantId: variantId });
-        
-        document.dispatchEvent(new CustomEvent('cart:change', { 
-          detail: { total: parsedState.items_subtotal_price }
-        }));
       })
       .catch(() => {
         this.querySelectorAll('.loading__spinner').forEach((overlay) => overlay.classList.add('hidden'));

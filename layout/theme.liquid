@@ -296,8 +296,6 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
-
-    {{ 'gift-modal.css' | asset_url | stylesheet_tag }}
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
@@ -375,18 +373,12 @@
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
 
-    <!-- Add the gift modal script here -->
-    <script src="{{ 'gift-modal.js' | asset_url }}" defer="defer"></script>
-
     {% assign active_campaign = metaobjects.gift_campaign.choose-a-free-accessory-above-amount %}
     {% if active_campaign %}
       <script type="application/json" id="giftCampaignData">
         {{ active_campaign | json }}
       </script>
 
-      <div id="GiftModal" class="gift-modal" aria-hidden="true">
-        {% render 'gift-modal' %}
-      </div>
     {% endif %}
   </body>
 </html>
