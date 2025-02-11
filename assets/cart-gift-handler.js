@@ -5,7 +5,7 @@ class CartFreeGiftHandler {
       this.section = document.querySelector('.shopify-section.section');
       this.collectionDiv = document.querySelector('.collection');
       this.giftSection = document.querySelector('.cart-free-gift-section');
-      this.sectionTitle = document.querySelector('.cart-free-gift-section__title');
+      this.sectionTitle = document.querySelector('.collection__title .title.h1');
       this.productCards = document.querySelectorAll('.free-gift-product-card');
       console.log('🎁 Free Gift Handler Initialized. Threshold:', this.cartThreshold);
       
@@ -79,6 +79,12 @@ class CartFreeGiftHandler {
             item.properties._is_free_gift === 'true'
         );
 
+        console.log('Debug - Elements:', {
+            title: this.sectionTitle,
+            cards: this.productCards.length,
+            hasGift: hasGift
+        });
+
         // Update section visibility based on threshold
         if (this.section) {
             this.section.style.display = thresholdMet ? 'block' : 'none';
@@ -91,9 +97,11 @@ class CartFreeGiftHandler {
         if (thresholdMet) {
             // Update title text
             if (this.sectionTitle) {
-                this.sectionTitle.textContent = hasGift 
-                    ? "Your free gift was added to cart!"
-                    : "Choose your free gift";
+                const newTitle = hasGift ? "Your free gift was added to cart!" : "Choose your free gift";
+                console.log('Updating title to:', newTitle);
+                this.sectionTitle.textContent = newTitle;
+            } else {
+                console.log('⚠️ Section title element not found');
             }
 
             // Toggle product cards visibility
