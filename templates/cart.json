@@ -47,7 +47,7 @@
         "description": "",
         "show_description": false,
         "description_style": "body",
-        "collection": "{{ metaobjects.gift_campaign[\"choose-a-free-accessory-above-amount\"].gifts_collection.value }}",
+        "collection": "gift-products",
         "products_to_show": 6,
         "columns_desktop": 3,
         "full_width": false,
