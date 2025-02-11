@@ -56,76 +56,59 @@ class CartFreeGiftHandler {
         
         // Check for gift items without the property
         const giftItems = cart.items.filter(item => 
-          item.title.toLowerCase().includes('free gift') && 
-          (!item.properties || !item.properties._is_free_gift)
+            item.title.toLowerCase().includes('free gift') && 
+            (!item.properties || !item.properties._is_free_gift)
         );
+
+        let currentCart = cart;
 
         // If we found any gift items without the property, update them
         if (giftItems.length > 0) {
-          console.log('🎁 Found gift items without property:', giftItems);
-          await this.updateGiftProperties(giftItems);
-          
-          // Fetch updated cart again after properties update
-          const updatedResponse = await fetch('/cart.js');
-          const updatedCart = await updatedResponse.json();
-          const updatedGiftItems = updatedCart.items.filter(item => 
-            item.title.toLowerCase().includes('free gift')
-          );
-          console.log('🎁 Updated gift items with properties:', updatedGiftItems);
-          
-          // Determine if there's a gift in cart (using either updatedCart or cart based on the condition)
-          const hasGift = (updatedCart || cart).items.some(item => 
-            item.title.toLowerCase().includes('free gift') && 
-            item.properties && 
-            item.properties._is_free_gift === 'true'
-          );
-
-          // Cart state log
-          console.log('🛒 Cart Update:', {
-            cartTotal: `$${cartTotal.toFixed(2)}`,
-            threshold: `$${this.cartThreshold}`,
-            thresholdMet: thresholdMet,
-            hasGift: hasGift
-          });
-        } else {
-          // Determine if there's a gift in cart (using either updatedCart or cart based on the condition)
-          const hasGift = (updatedCart || cart).items.some(item => 
-            item.title.toLowerCase().includes('free gift') && 
-            item.properties && 
-            item.properties._is_free_gift === 'true'
-          );
-
-          // Regular cart state log
-          console.log('🛒 Cart Update:', {
-            cartTotal: `$${cartTotal.toFixed(2)}`,
-            threshold: `$${this.cartThreshold}`,
-            thresholdMet: thresholdMet,
-            hasGift: hasGift
-          });
+            console.log('🎁 Found gift items without property:', giftItems);
+            await this.updateGiftProperties(giftItems);
+            
+            // Fetch updated cart again after properties update
+            const updatedResponse = await fetch('/cart.js');
+            currentCart = await updatedResponse.json();
         }
+
+        // Determine if there's a gift in cart
+        const hasGift = currentCart.items.some(item => 
+            item.title.toLowerCase().includes('free gift') && 
+            item.properties && 
+            item.properties._is_free_gift === 'true'
+        );
 
         // Update section visibility based on threshold
         if (this.section) {
-          this.section.style.display = thresholdMet ? 'block' : 'none';
+            this.section.style.display = thresholdMet ? 'block' : 'none';
         }
         if (this.giftSection) {
-          this.giftSection.style.display = thresholdMet ? 'block' : 'none';
+            this.giftSection.style.display = thresholdMet ? 'block' : 'none';
         }
 
         // If threshold is met, handle the gift status display
         if (thresholdMet) {
-          // Update title text
-          if (this.sectionTitle) {
-            this.sectionTitle.textContent = hasGift 
-              ? "Your free gift was added to cart!"
-              : "Choose your free gift";
-          }
+            // Update title text
+            if (this.sectionTitle) {
+                this.sectionTitle.textContent = hasGift 
+                    ? "Your free gift was added to cart!"
+                    : "Choose your free gift";
+            }
 
-          // Toggle product cards visibility
-          this.productCards.forEach(card => {
-            card.style.display = hasGift ? 'none' : 'block';
-          });
+            // Toggle product cards visibility
+            this.productCards.forEach(card => {
+                card.style.display = hasGift ? 'none' : 'block';
+            });
         }
+
+        // Cart state log
+        console.log('🛒 Cart Update:', {
+            cartTotal: `$${cartTotal.toFixed(2)}`,
+            threshold: `$${this.cartThreshold}`,
+            thresholdMet: thresholdMet,
+            hasGift: hasGift
+        });
 
       } catch (error) {
         console.error('❌ Error handling cart update:', error);
