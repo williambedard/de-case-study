@@ -5,6 +5,8 @@ class CartFreeGiftHandler {
       this.section = document.querySelector('.shopify-section.section');
       this.collectionDiv = document.querySelector('.collection');
       this.giftSection = document.querySelector('.cart-free-gift-section');
+      this.sectionTitle = document.querySelector('.cart-free-gift-section__title');
+      this.productCards = document.querySelectorAll('.free-gift-product-card');
       console.log('🎁 Free Gift Handler Initialized. Threshold:', this.cartThreshold);
       
       if (!this.section || !this.collectionDiv) {
@@ -71,14 +73,14 @@ class CartFreeGiftHandler {
           );
           console.log('🎁 Updated gift items with properties:', updatedGiftItems);
           
-          // Use updated cart data for hasGift check
-          const hasGift = updatedCart.items.some(item => 
+          // Determine if there's a gift in cart (using either updatedCart or cart based on the condition)
+          const hasGift = (updatedCart || cart).items.some(item => 
             item.title.toLowerCase().includes('free gift') && 
             item.properties && 
             item.properties._is_free_gift === 'true'
           );
 
-          // Cart state log with updated data
+          // Cart state log
           console.log('🛒 Cart Update:', {
             cartTotal: `$${cartTotal.toFixed(2)}`,
             threshold: `$${this.cartThreshold}`,
@@ -86,8 +88,8 @@ class CartFreeGiftHandler {
             hasGift: hasGift
           });
         } else {
-          // Use current cart data for hasGift check when no updates needed
-          const hasGift = cart.items.some(item => 
+          // Determine if there's a gift in cart (using either updatedCart or cart based on the condition)
+          const hasGift = (updatedCart || cart).items.some(item => 
             item.title.toLowerCase().includes('free gift') && 
             item.properties && 
             item.properties._is_free_gift === 'true'
@@ -102,15 +104,27 @@ class CartFreeGiftHandler {
           });
         }
 
-        // Update all relevant section elements
+        // Update section visibility based on threshold
         if (this.section) {
           this.section.style.display = thresholdMet ? 'block' : 'none';
         }
-        if (this.collectionDiv) {
-          this.collectionDiv.style.display = thresholdMet ? 'block' : 'none';
-        }
         if (this.giftSection) {
           this.giftSection.style.display = thresholdMet ? 'block' : 'none';
+        }
+
+        // If threshold is met, handle the gift status display
+        if (thresholdMet) {
+          // Update title text
+          if (this.sectionTitle) {
+            this.sectionTitle.textContent = hasGift 
+              ? "Your free gift was added to cart!"
+              : "Choose your free gift";
+          }
+
+          // Toggle product cards visibility
+          this.productCards.forEach(card => {
+            card.style.display = hasGift ? 'none' : 'block';
+          });
         }
 
       } catch (error) {
