@@ -1,0 +1,42 @@
+{% assign campaign = metaobjects.gift_campaign.choose-a-free-accessory-above-amount %}
+{% assign collection = collections[campaign.gifts_collection.value.handle] %}
+
+<script type="application/json" id="giftCampaignData">
+  {
+    "campaign_name": {{ campaign.campaign_name.value | json }},
+    "threshold": {{ campaign.cart_threshold_amount.value | json }},
+    "variant_ids": {{ campaign.optional_gift_variants.value | map: 'id' | json }}
+  }
+</script>
+
+<gift-modal>
+  <div id="GiftModal" class="gift-modal">
+    <div class="gift-modal-wrapper page-width">
+      <div class="gift-modal__content gradient">
+        <div class="gift-modal__header">
+          <h2>{{ campaign.campaign_name.value }}</h2>
+          <button type="button" class="gift-modal__close">×</button>
+        </div>
+        
+        <div class="gift-options">
+          <h3>Debug Collection Access:</h3>
+          <p>Collection Title: {{ collection.title }}</p>
+          <p>Number of Products: {{ collection.products_count }}</p>
+          
+          <h3>Products:</h3>
+          {% for product in collection.products limit: 3 %}
+            <div class="gift-option">
+              <p>Title: {{ product.title }}</p>
+              <p>First Available Variant ID: {{ product.first_available_variant.id }}</p>
+              <p>Price: {{ product.price | money }}</p>
+              {% if product.featured_image %}
+                <img src="{{ product.featured_image | img_url: '200x' }}" alt="{{ product.title }}">
+              {% endif %}
+            </div>
+            <hr>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</gift-modal>
