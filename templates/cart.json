@@ -20,7 +20,7 @@
     "cart_free_gift_RD7TNr": {
       "type": "cart-free-gift",
       "settings": {
-        "cart_threshold": 300,
+        "cart_threshold": 1000,
         "title": "Choose your free gift",
         "heading_size": "h1",
         "description": "",
@@ -63,81 +63,11 @@
         "padding_top": 20,
         "padding_bottom": 40
       }
-    },
-    "featured_product_NPpBpK": {
-      "type": "featured-product",
-      "blocks": {
-        "text_BhwFtE": {
-          "type": "text",
-          "settings": {
-            "text": "{{ section.settings.product.vendor }}",
-            "text_style": "uppercase"
-          }
-        },
-        "title_9QaDjH": {
-          "type": "title",
-          "settings": {
-            "heading_size": "h1"
-          }
-        },
-        "price_jbL8tT": {
-          "type": "price",
-          "settings": {}
-        },
-        "variant_picker_LweU7g": {
-          "type": "variant_picker",
-          "settings": {
-            "picker_type": "button",
-            "swatch_shape": "circle"
-          }
-        },
-        "quantity_selector_mT3LxH": {
-          "type": "quantity_selector",
-          "settings": {}
-        },
-        "buy_buttons_UhqtKK": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": true
-          }
-        },
-        "share_wtLFKh": {
-          "type": "share",
-          "settings": {
-            "share_label": "Share"
-          }
-        }
-      },
-      "block_order": [
-        "text_BhwFtE",
-        "title_9QaDjH",
-        "price_jbL8tT",
-        "variant_picker_LweU7g",
-        "quantity_selector_mT3LxH",
-        "buy_buttons_UhqtKK",
-        "share_wtLFKh"
-      ],
-      "settings": {
-        "product": "free-luggage-tag",
-        "color_scheme": "",
-        "secondary_background": false,
-        "media_size": "medium",
-        "constrain_to_viewport": true,
-        "media_fit": "contain",
-        "media_position": "left",
-        "image_zoom": "lightbox",
-        "hide_variants": false,
-        "enable_video_looping": false,
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
     }
   },
   "order": [
     "cart-items",
     "cart_free_gift_RD7TNr",
-    "cart-footer",
-    "featured_product_NPpBpK"
+    "cart-footer"
   ]
 }
