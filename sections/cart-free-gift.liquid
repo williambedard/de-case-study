@@ -37,7 +37,9 @@
 <div id="shopify-section-cart-free-gift" class="cart-free-gift-section" data-threshold="{{ section.settings.cart_threshold }}" style="display: none;">
   <cart-free-gift-handler data-threshold="{{ section.settings.cart_threshold }}"></cart-free-gift-handler>
   <div class="color-{{ section.settings.color_scheme }} isolate gradient">
-    <div class="collection section-{{ section.id }}-padding{% if section.settings.full_width %} collection--full-width{% endif %}">
+    <div class="collection section-{{ section.id }}-padding{% if section.settings.full_width %} collection--full-width{% endif %}" 
+         id="collection-{{ section.id }}" 
+         data-id="{{ section.id }}">
       {%- if section.settings.title != blank -%}
         <div class="collection__title title-wrapper title-wrapper--no-top-margin page-width{% if show_mobile_slider %} title-wrapper--self-padded-tablet-down{% endif %}{% if show_desktop_slider %} collection__title--desktop-slider{% endif %}">
           <h2 class="title {{ section.settings.heading_size }}">{{ section.settings.title | escape }}</h2>
