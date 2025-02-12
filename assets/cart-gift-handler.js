@@ -2,54 +2,24 @@ class CartFreeGiftHandler {
     constructor(element) {
       this.element = element;
       this.cartThreshold = parseInt(this.element.getAttribute('data-threshold')) || 300;
-      this.section = document.querySelector('.shopify-section.section');
-      this.collectionDiv = document.querySelector('.collection');
-      this.giftSection = document.querySelector('.cart-free-gift-section');
+      this.section = document.getElementById('shopify-section-cart-free-gift');
       this.sectionTitle = document.querySelector('.collection__title .title');
       this.productCards = document.querySelectorAll('.free-gift-product-card');
       
-      console.log('🎁 Free Gift Handler Initialized:', {
-          titleFound: !!this.sectionTitle,
-          titleElement: this.sectionTitle,
-          cardsFound: this.productCards.length
-      });
+      setTimeout(() => this.handleCartUpdate(), 0);
       
-      if (!this.sectionTitle) {
-          console.warn('⚠️ Title element not found with selector: .collection__title .title');
-      }
-      
-      this.init();
-    }
-  
-    init() {
-      // Watch for DOM changes in the cart-items element
       const cartItems = document.querySelector('cart-items');
       if (cartItems) {
-        const observer = new MutationObserver((mutations) => {
-          console.log('🔄 Cart content updated');
-          // Add small delay to ensure cart is fully updated
+        const observer = new MutationObserver(() => {
           setTimeout(() => this.handleCartUpdate(), 100);
         });
-        
         observer.observe(cartItems, {
           childList: true,
           subtree: true,
-          characterData: true
+          characterData: true,
+          attributes: true
         });
       }
-
-      // Add property to all gift product forms
-      document.querySelectorAll('.free-gift-product-card form[action="/cart/add"]').forEach(form => {
-        const propertyInput = document.createElement('input');
-        propertyInput.type = 'hidden';
-        propertyInput.name = 'properties[_is_free_gift]';
-        propertyInput.value = 'true';
-        
-        form.appendChild(propertyInput);
-      });
-      
-      // Initial check
-      this.handleCartUpdate();
     }
   
     async handleCartUpdate() {
@@ -58,70 +28,27 @@ class CartFreeGiftHandler {
         const cart = await response.json();
         const cartTotal = cart.total_price / 100;
         const thresholdMet = parseFloat(cartTotal) >= parseFloat(this.cartThreshold);
-        
-        // Check for gift items without the property
-        const giftItems = cart.items.filter(item => 
-            item.title.toLowerCase().includes('free gift') && 
-            (!item.properties || !item.properties._is_free_gift)
-        );
 
-        let currentCart = cart;
-
-        // If we found any gift items without the property, update them
-        if (giftItems.length > 0) {
-            console.log('🎁 Found gift items without property:', giftItems);
-            await this.updateGiftProperties(giftItems);
-            
-            // Fetch updated cart again after properties update
-            const updatedResponse = await fetch('/cart.js');
-            currentCart = await updatedResponse.json();
-        }
-
-        // Determine if there's a gift in cart
-        const hasGift = currentCart.items.some(item => 
-            item.title.toLowerCase().includes('free gift') && 
-            item.properties && 
-            item.properties._is_free_gift === 'true'
-        );
-
-        console.log('Debug - Elements:', {
-            title: this.sectionTitle,
-            cards: this.productCards.length,
-            hasGift: hasGift
-        });
-
-        // Update section visibility based on threshold
         if (this.section) {
-            this.section.style.display = thresholdMet ? 'block' : 'none';
-        }
-        if (this.giftSection) {
-            this.giftSection.style.display = thresholdMet ? 'block' : 'none';
+            this.section.style.setProperty('display', thresholdMet ? 'block' : 'none', 'important');
         }
 
-        // If threshold is met, handle the gift status display
         if (thresholdMet) {
-            // Update title text
-            if (this.sectionTitle) {
-                const newTitle = hasGift ? "Your free gift was added to cart!" : "Choose your free gift";
-                console.log('Updating title to:', newTitle);
-                this.sectionTitle.textContent = newTitle;
-            } else {
-                console.log('⚠️ Section title element not found');
-            }
+          const hasGift = cart.items.some(item => 
+            item.title.toLowerCase().includes('free gift') && 
+            item.properties?._is_free_gift === 'true'
+          );
 
-            // Toggle product cards visibility
-            this.productCards.forEach(card => {
-                card.style.display = hasGift ? 'none' : 'block';
-            });
+          if (this.sectionTitle) {
+            this.sectionTitle.textContent = hasGift 
+              ? "Your free gift was added to cart!" 
+              : "Choose your free gift";
+          }
+
+          this.productCards.forEach(card => {
+            card.style.setProperty('display', hasGift ? 'none' : 'block', 'important');
+          });
         }
-
-        // Cart state log
-        console.log('🛒 Cart Update:', {
-            cartTotal: `$${cartTotal.toFixed(2)}`,
-            threshold: `$${this.cartThreshold}`,
-            thresholdMet: thresholdMet,
-            hasGift: hasGift
-        });
 
       } catch (error) {
         console.error('❌ Error handling cart update:', error);
@@ -150,9 +77,14 @@ class CartFreeGiftHandler {
         }
       }
     }
+
+    disconnectedCallback() {
+      if (this.cartUpdateUnsubscriber) {
+        this.cartUpdateUnsubscriber();
+      }
+    }
 }
-  
-// Initialize the handler
+
 customElements.define('cart-free-gift-handler', class extends HTMLElement {
   connectedCallback() {
     new CartFreeGiftHandler(this);
