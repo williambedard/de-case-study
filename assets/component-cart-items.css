@@ -349,3 +349,26 @@ cart-remove-button .icon-remove {
     padding-left: 0;
   }
 }
+
+/* Hide quantity controls for free gift items */
+.cart-item--free-gift .quantity__button {
+  display: none;
+}
+
+.cart-item--free-gift .quantity__input {
+  opacity: 0.75;
+  cursor: not-allowed;
+  -webkit-appearance: none;
+}
+
+/* Style free gift title to look like other product titles but without link behavior */
+.cart-item--free-gift .cart-item__name {
+  pointer-events: none;
+  text-decoration: none;
+  color: inherit;
+  cursor: default;
+}
+
+.cart-item--free-gift .cart-item__name:hover {
+  text-decoration: none;
+}
