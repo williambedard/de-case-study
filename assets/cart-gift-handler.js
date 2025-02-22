@@ -140,71 +140,85 @@ class CartGiftHandler extends HTMLElement {
     this.cartThreshold = parseFloat(this.dataset.cartThreshold) || 0;
     this.sectionId = this.dataset.sectionId;
 
-    // Listen for cart updates
-    subscribe(PUB_SUB_EVENTS.cartUpdate, this.handleCartUpdate.bind(this));
+    // Debounce the cart update handler
+    const debouncedHandler = debounce((event) => {
+      if (event.source === 'cart-gift-handler') return;
+      this.handleCartUpdate(event);
+    }, 100); // Small delay to let other updates finish
+
+    subscribe(PUB_SUB_EVENTS.cartUpdate, debouncedHandler);
   }
 
   async handleCartUpdate(event) {
     const cartData = await this.getCartContents();
-    const cartTotal = cartData.total_price / 100; // Convert to dollars
+    const cartTotal = cartData.total_price / 100;
 
     // If below threshold, remove gifts and update section
     if (cartTotal < this.cartThreshold) {
-      await this.removeFreeGifts(cartData.items);
+      await this.handleGiftSection(cartData.items);
+    } else {
+      // If above threshold, just update section
+      await this.handleGiftSection(cartData.items, false);
     }
   }
 
-  async removeFreeGifts(cartItems) {
-    const updates = {};
-    cartItems.forEach(item => {
-      if (item.properties && item.properties._free_gift === 'true') {
-        updates[item.key] = 0;
-      }
-    });
+  async getCartContents() {
+    const response = await fetch(`${routes.cart_url}.js`);
+    return response.json();
+  }
 
-    if (Object.keys(updates).length === 0) return;
+  async handleGiftSection(cartItems, shouldRemoveGifts = true) {
+    const updates = {};
+    if (shouldRemoveGifts) {
+      cartItems.forEach(item => {
+        if (item.properties && item.properties._free_gift === 'true') {
+          updates[item.key] = 0;
+        }
+      });
+    }
 
     try {
-      // Use bundled section rendering
       const response = await fetch(`${routes.cart_update_url}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
+        body: JSON.stringify({ 
           updates,
-          sections: [this.sectionId] // Request our section update
+          sections: [this.sectionId]
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const responseData = await response.json();
       
-      // Update the section HTML if it was returned
+      // Update section with proper DOM manipulation
       if (responseData.sections && responseData.sections[this.sectionId]) {
-        document.getElementById(`shopify-section-${this.sectionId}`)
-          .innerHTML = responseData.sections[this.sectionId];
+        const currentSection = document.getElementById(`shopify-section-${this.sectionId}`);
+        if (currentSection) {
+          // Create a temporary container
+          const temp = document.createElement('div');
+          temp.innerHTML = responseData.sections[this.sectionId].trim();
+          
+          // Get the new section element
+          const newSection = temp.firstElementChild;
+          
+          // Replace the old section with the new one
+          if (currentSection.parentNode) {
+            currentSection.parentNode.replaceChild(newSection, currentSection);
+          }
+        }
       }
 
-      // Notify other components of cart update
-      publish(PUB_SUB_EVENTS.cartUpdate, {
-        source: 'cart-gift-handler',
-        cartData: responseData
-      });
-
+      if (Object.keys(updates).length > 0) {
+        publish(PUB_SUB_EVENTS.cartUpdate, {
+          source: 'cart-gift-handler',
+          cartData: responseData
+        });
+      }
     } catch (error) {
-      console.error('Error updating cart:', error);
+      console.error('Error updating gift section:', error);
     }
-  }
-
-  // Fetch current cart contents using Shopify Cart API
-  async getCartContents() {
-    const response = await fetch(`${routes.cart_url}.js`);
-    return response.json();
   }
 }
 
