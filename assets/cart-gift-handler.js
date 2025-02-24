@@ -139,6 +139,7 @@ class CartGiftHandler extends HTMLElement {
     super();
     this.cartThreshold = parseFloat(this.dataset.cartThreshold) || 0;
     this.sectionId = this.dataset.sectionId;
+    this.customerEligible = this.dataset.customerEligible === 'true';
 
     // Debounce the cart update handler
     const debouncedHandler = debounce((event) => {
@@ -151,14 +152,30 @@ class CartGiftHandler extends HTMLElement {
 
   async handleCartUpdate(event) {
     const cartData = await this.getCartContents();
-    const cartTotal = cartData.total_price / 100;
+    if (!cartData) return;
 
-    // If below threshold, remove gifts and update section
-    if (cartTotal < this.cartThreshold) {
+    const cartTotal = cartData.total_price / 100;
+    const giftCount = cartData.items.filter(item => 
+      item.properties && item.properties._free_gift === 'true'
+    ).length;
+
+    // Remove gifts ONLY if there's more than one
+    if (giftCount > 1) {
       await this.handleGiftSection(cartData.items);
-    } else {
-      // If above threshold, just update section
+      return;
+    }
+
+    // Eligible customers can always keep/add a gift
+    if (this.customerEligible) {
       await this.handleGiftSection(cartData.items, false);
+      return;
+    }
+
+    // Non-eligible customers need to meet threshold
+    if (cartTotal >= this.cartThreshold) {
+      await this.handleGiftSection(cartData.items, false);
+    } else {
+      await this.handleGiftSection(cartData.items);
     }
   }
 

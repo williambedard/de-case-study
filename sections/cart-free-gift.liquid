@@ -5,18 +5,17 @@
 
 <script src="{{ 'cart-gift-handler.js' | asset_url }}" defer="defer"></script>
 
-<cart-gift-handler
-  data-cart-threshold="{{ section.settings.cart_threshold }}"
-  data-section-id="{{ section.id }}">
-</cart-gift-handler>
-
 {% assign quick_add = 'standard' %}
 
 {% assign cart_total = cart.total_price | divided_by: 100.00 %}
 
-{% assign show_section = false %}
+{% assign customer_eligible = false %}
+{% if customer and customer.tags contains 'free-gift-eligible' %}
+  {% assign customer_eligible = true %}
+{% endif %}
 
 {% assign cart_contains_free_gift = false %}
+
 {% for item in cart.items %}
   {% if item.product.tags contains 'free_gift' %}
     {% assign cart_contains_free_gift = true %}
@@ -24,7 +23,18 @@
   {% endif %}
 {% endfor %}
 
-{% if cart_total >= section.settings.cart_threshold %}
+<cart-gift-handler
+  data-cart-threshold="{{ section.settings.cart_threshold }}"
+  data-section-id="{{ section.id }}"
+  data-customer-eligible="{{ customer_eligible }}">
+</cart-gift-handler>
+
+{% assign show_section = false %}
+{% if customer_eligible %}
+  {% if cart_contains_free_gift == false %}
+    {% assign show_section = true %}
+  {% endif %}
+{% elsif cart_total >= section.settings.cart_threshold %}
   {% if cart_contains_free_gift == false %}
     {% assign show_section = true %}
   {% endif %}
