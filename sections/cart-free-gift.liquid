@@ -23,12 +23,6 @@
   {% endif %}
 {% endfor %}
 
-<cart-gift-handler
-  data-cart-threshold="{{ section.settings.cart_threshold }}"
-  data-section-id="{{ section.id }}"
-  data-customer-eligible="{{ customer_eligible }}">
-</cart-gift-handler>
-
 {% assign show_section = false %}
 {% if customer_eligible %}
   {% if cart_contains_free_gift == false %}
@@ -41,7 +35,7 @@
 {% endif %}
 
 {% unless show_section == false or cart_contains_free_gift == true %}
-<div id="shopify-section-cart-free-gift" class="cart-free-gift-section" >
+<div id="shopify-section-cart-free-gift" class="cart-free-gift-section" data-cart-threshold="{{ section.settings.cart_threshold }}"data-section-id="{{ section.id }}" data-customer-eligible="{{ customer_eligible }}">
   <div class="color-{{ section.settings.color_scheme }} isolate gradient">
     <div class="collection section-{{ section.id }}-padding{% if section.settings.full_width %} collection--full-width{% endif %}" 
          id="collection-{{ section.id }}" 
